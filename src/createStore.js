@@ -38,7 +38,7 @@ export default function createStore(reducer, preloadedState, enhancer) {
     if (typeof enhancer !== 'function') {
       throw new Error('Expected the enhancer to be a function.')
     }
-
+    
     return enhancer(createStore)(reducer, preloadedState)
   }
 
@@ -52,7 +52,9 @@ export default function createStore(reducer, preloadedState, enhancer) {
   let nextListeners = currentListeners
   let isDispatching = false
 
+  //to do: 这个函数的作用是什么？
   function ensureCanMutateNextListeners() {
+    // 如果数组相等，就赋值，那这个赋值还有什么意义？
     if (nextListeners === currentListeners) {
       nextListeners = currentListeners.slice()
     }
@@ -117,7 +119,9 @@ export default function createStore(reducer, preloadedState, enhancer) {
     ensureCanMutateNextListeners()
     nextListeners.push(listener)
 
+    // 利用闭包实现“取消订阅”
     return function unsubscribe() {
+      // 如果已经取消订阅了，直接退出函数
       if (!isSubscribed) {
         return
       }
@@ -133,6 +137,7 @@ export default function createStore(reducer, preloadedState, enhancer) {
 
       ensureCanMutateNextListeners()
       const index = nextListeners.indexOf(listener)
+      // “取消订阅”实际上就是从listener数组中删除该监听函数
       nextListeners.splice(index, 1)
     }
   }
@@ -162,6 +167,8 @@ export default function createStore(reducer, preloadedState, enhancer) {
    * Note that, if you use a custom middleware, it may wrap `dispatch()` to
    * return something else (for example, a Promise you can await).
    */
+
+  // to do: how to keep actions serializable and record and replay user sessions?
   function dispatch(action) {
     if (!isPlainObject(action)) {
       throw new Error(
@@ -183,11 +190,13 @@ export default function createStore(reducer, preloadedState, enhancer) {
 
     try {
       isDispatching = true
+      // 生成store树
       currentState = currentReducer(currentState, action)
     } finally {
       isDispatching = false
     }
 
+    //执行listeners
     const listeners = (currentListeners = nextListeners)
     for (let i = 0; i < listeners.length; i++) {
       const listener = listeners[i]
@@ -213,6 +222,7 @@ export default function createStore(reducer, preloadedState, enhancer) {
     }
 
     currentReducer = nextReducer
+    // TODO: 触发这个action会得到什么结果？
     dispatch({ type: ActionTypes.REPLACE })
   }
 
@@ -249,6 +259,7 @@ export default function createStore(reducer, preloadedState, enhancer) {
         return { unsubscribe }
       },
 
+      // 这个方法的左右是什么？
       [$$observable]() {
         return this
       }

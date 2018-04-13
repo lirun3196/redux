@@ -1,4 +1,5 @@
 .DS_Store
+.history
 *.log
 node_modules
 dist
