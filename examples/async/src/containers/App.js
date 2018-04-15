@@ -41,6 +41,7 @@ class App extends Component {
   render() {
     const { selectedSubreddit, posts, isFetching, lastUpdated } = this.props
     const isEmpty = posts.length === 0
+    console.log('app-store:',this.props)
     return (
       <div>
         <Picker value={selectedSubreddit}
@@ -71,6 +72,7 @@ class App extends Component {
 }
 
 const mapStateToProps = state => {
+  console.log('state:',state)
   const { selectedSubreddit, postsBySubreddit } = state
   const {
     isFetching,

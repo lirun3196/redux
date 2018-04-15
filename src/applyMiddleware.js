@@ -32,6 +32,9 @@ export default function applyMiddleware(...middlewares) {
       dispatch: (...args) => dispatch(...args)
     }
     chain = middlewares.map(middleware => middleware(middlewareAPI))
+    // rest参数: 和compose声明的时候不同的是,compose的调用是将chain数组[fun1,fun2...]解构后作为compose实参: fun1,fun2...,
+    // 在compose函数体内得到的参数值就是数组本身[fun1,fun2]
+    // 查看改声明的返回值及dispatch的值: https://repl.it/@Rich666/reduxcomposeutil
     dispatch = compose(...chain)(store.dispatch)
 
     return {

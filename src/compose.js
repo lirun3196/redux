@@ -18,5 +18,6 @@ export default function compose(...funcs) {
     return funcs[0]
   }
 
+  //reduce: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/Reduce
   return funcs.reduce((a, b) => (...args) => a(b(...args)))
 }

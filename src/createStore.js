@@ -190,7 +190,7 @@ export default function createStore(reducer, preloadedState, enhancer) {
 
     try {
       isDispatching = true
-      // 生成store树
+      // 返回新的store树
       currentState = currentReducer(currentState, action)
     } finally {
       isDispatching = false
@@ -222,7 +222,11 @@ export default function createStore(reducer, preloadedState, enhancer) {
     }
 
     currentReducer = nextReducer
-    // TODO: 触发这个action会得到什么结果？
+    // TODO: 触发这个action会得到什么结果:
+    /* 
+    * For any unknown actions, you must return the current state.
+    * If the current state is undefined, you must return the initial state.
+    */
     dispatch({ type: ActionTypes.REPLACE })
   }
 
@@ -259,7 +263,7 @@ export default function createStore(reducer, preloadedState, enhancer) {
         return { unsubscribe }
       },
 
-      // 这个方法的左右是什么？
+      // 这个方法的作用是什么？
       [$$observable]() {
         return this
       }
@@ -269,6 +273,10 @@ export default function createStore(reducer, preloadedState, enhancer) {
   // When a store is created, an "INIT" action is dispatched so that every
   // reducer returns their initial state. This effectively populates
   // the initial state tree.
+  /* 
+   * For any unknown actions, you must return the current state.
+   * If the current state is undefined, you must return the initial state.
+  */
   dispatch({ type: ActionTypes.INIT })
 
   return {
